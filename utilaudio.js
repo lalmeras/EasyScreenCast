@@ -159,15 +159,7 @@ const MixerAudio = new Lang.Class({
         var arrtmp = this.getListInputAudio();
         var index = Settings.getOption(
             'i', Settings.INPUT_AUDIO_SOURCE_SETTING_KEY) - 2;
-
-        if(index >= 0 && index < arrtmp.length){
-            return arrtmp[index].name;
-        } else {
-             Lib.TalkativeLog('-#-ERROR, audio source missing');
-            Settings.setOption(Settings.INPUT_AUDIO_SOURCE_SETTING_KEY, 0);
-
-            return '';
-        }
+        return arrtmp[index].name;
     },
 
 

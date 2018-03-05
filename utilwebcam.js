@@ -25,7 +25,7 @@ Gst.init(null);
 let ListDevices = null;
 let ListCaps = null;
 
-const HelperWebcam = new Lang.Class({
+var HelperWebcam = new Lang.Class({
     Name: "HelperWebcam",
     /*
      * Create a device monitor inputvideo
@@ -34,14 +34,17 @@ const HelperWebcam = new Lang.Class({
         Lib.TalkativeLog('-@-init webcam');
 
         //get gstreamer lib version
-        var [M, m, micro, nano] = Gst.version();
+        let M, m, micro, nano;
+        [M, m, micro, nano] = Gst.version();
         Lib.TalkativeLog('-@-gstreamer version: ' + M + '.' + m + '.' + micro + '.' + nano);
         if (M === 1 && m >= 8) {
+            Lib.TalkativeLog('-@-gstreamer since 1.8');
             //gstreamer version equal or higher 1.8
             this.deviceMonitor = new Gst.DeviceMonitor({
                 show_all: true
             });
         } else {
+            Lib.TalkativeLog('-@-gstreamer lower 1.8');
             //gstreamer version lower 1.8
             this.deviceMonitor = new Gst.DeviceMonitor();
         }
@@ -61,7 +64,7 @@ const HelperWebcam = new Lang.Class({
             if (this.dmBus !== null && this.dmBus !== undefined) {
                 Lib.TalkativeLog('-@-dbus created');
                 this.dmBus.add_watch(GLib.PRIORITY_DEFAULT, this._getMsg);
-                let caps = Gst.Caps.new_empty_simple('video/x-raw', null);
+                let caps = Gst.Caps.new_empty_simple('video/x-raw');
                 this.deviceMonitor.add_filter('Video/Source', caps);
 
                 //update device and caps
@@ -105,6 +108,7 @@ const HelperWebcam = new Lang.Class({
         Lib.TalkativeLog('-@-refresh all video input');
 
         ListDevices = this.getDevicesIV();
+	//ListDevices = [];
 
         //compose devices array
         ListCaps = [];
@@ -148,9 +152,8 @@ const HelperWebcam = new Lang.Class({
             var firstOPT = strCaps.indexOf('{ ');
             var lastOPT = strCaps.indexOf(' }');
             var nextMedia = strCaps.indexOf(',', firstOPT);
-            if (strCaps.indexOf(',', firstOPT) + 1 > lastOPT + 2) {
-                nextMedia = lastOPT;
-            }
+            if (strCaps.indexOf(',', firstOPT) + 1 > lastOPT + 2)
+		nextMedia = lastOPT;
 
             var strInitial = strCaps.substr(0, firstOPT);
             var strMedia = strCaps.substring(firstOPT + 2,
@@ -184,11 +187,7 @@ const HelperWebcam = new Lang.Class({
 
         var tmpArray = [];
         for (var index in ListDevices) {
-            var wcName=_('Unspecified webcam');
-            if(ListDevices[index].display_name!==''){
-              wcName=ListDevices[index].display_name
-            }
-            tmpArray.push(wcName);
+            tmpArray.push(ListDevices[index].display_name);
         }
 
         Lib.TalkativeLog('-@-list devices name: ' + tmpArray);

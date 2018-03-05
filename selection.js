@@ -242,29 +242,20 @@ const SelectionWindow = new Lang.Class({
             if (this._selectedWindow) {
                 this._capture._stop();
 
-                var max_height=global.screen_height;
-                var max_width=global.screen_width;
-                Lib.TalkativeLog('-£-global screen area H: '+ max_height + ' W: ' + max_width);
+                let tmpM = Main.layoutManager.currentMonitor;
 
                 var [w, h] = this._selectedWindow.get_size();
                 var [wx, wy] = this._selectedWindow.get_position();
 
                 Lib.TalkativeLog('-£-windows pre wx: ' + wx + ' wy: ' + wy + ' height: ' + h + '  width: ' + w);
 
-                if (wx < 0) {
-                    wx = 0;
+                if (wx < 0) wx = 0;
+                if (wy < 0) wy = 0;
+                if (wx + w > tmpM.width) {
+                    w -= Math.abs((wx + w) - tmpM.width);
                 }
-
-                if (wy < 0) {
-                    wy = 0;
-                }
-
-                if (wx + w > max_width) {
-                    w = max_width - wx;
-                }
-
-                if (wy + h > max_height) {
-                    h = max_height - wy;
+                if (wy + h > tmpM.height) {
+                    h -= Math.abs((wy + h) - tmpM.height);
                 }
 
                 Lib.TalkativeLog('-£-windows post wx: ' + wx + ' wy: ' + wy + ' height: ' + h + ' width: ' + w);
@@ -439,9 +430,9 @@ const selectWindow = function(windows, x, y) {
         }
     });
 
-    filtered.sort(function(a, b) {
-        return a.get_meta_window().get_layer() <= b.get_meta_window().get_layer();
-    });
+    filtered.sort(function(a, b)
+        (a.get_meta_window().get_layer() <= b.get_meta_window().get_layer())
+    );
 
     return filtered[0];
 };

@@ -152,10 +152,10 @@ const EasyScreenCast_Indicator = new Lang.Class({
                 number = "0" + number;
             }
 
-            return number.toString();
+            return number.toString()
         }
 
-        if (typeof(newValue) === "number") {
+        if (typeof(newValue) == "number") {
             let hours = Math.floor(newValue / 3600);
             newValue = newValue - hours * 3600;
 
@@ -204,11 +204,7 @@ const EasyScreenCast_Indicator = new Lang.Class({
             x_expand: true,
             x_align: Clutter.ActorAlign.CENTER,
         });
-        this.imRecordAction.actor.add_child(this.RecordingLabel, {
-            x_expand: true,
-            x_fill: true,
-            x_align: Clutter.ActorAlign.CENTER,
-        });
+        this.imRecordAction.actor.add_child(this.RecordingLabel);
 
         this.imRecordAction.connect('activate', Lang.bind(this, function() {
             this.isShowNotify = Settings.getOption(
@@ -426,11 +422,10 @@ const EasyScreenCast_Indicator = new Lang.Class({
 
         this.DelayTimeLabel = new St.Label({
             text: Math.floor(Settings.getOption('i',
-                Settings.TIME_DELAY_SETTING_KEY)).toString() + _(' Sec')
+                Settings.TIME_DELAY_SETTING_KEY)).toString() + _(' Sec'),
         });
-        this.DelayTimeTitle.actor.add_child(this.DelayTimeLabel, {
-            align: St.Align.END
-        });
+	this.DelayTimeLabel.set_x_align(St.Align.END);
+        this.DelayTimeTitle.actor.add_child(this.DelayTimeLabel);
 
         this.imSliderDelay = new PopupMenu.PopupBaseMenuItem({
             activate: false
